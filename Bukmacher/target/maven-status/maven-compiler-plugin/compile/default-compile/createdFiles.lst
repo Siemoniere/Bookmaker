@@ -1,0 +1,13 @@
+com/mojeapp/Wallet.class
+com/mojeapp/Main.class
+com/mojeapp/Login.class
+com/mojeapp/SecureScanner.class
+com/mojeapp/Usage.class
+com/mojeapp/Database.class
+com/mojeapp/AddCoupon.class
+com/mojeapp/AddMatch.class
+com/mojeapp/Register.class
+com/mojeapp/PasswordUtil.class
+com/mojeapp/DeleteAccount.class
+com/mojeapp/IsAdmin.class
+com/mojeapp/ChangeOdds.class
