@@ -26,7 +26,7 @@ public class Usage {
                     new Wallet(thisuser);
                     break;
                 case 2:
-                    
+                    new AddCoupon(thisuser);
                     break;
             
                 case 3:
@@ -35,14 +35,11 @@ public class Usage {
                     scanner.close();
                     return;            
                 case 5:
-                    
+                    new AddMatch();
                     break;
-            
                 case 6:
-                    
+                    new ChangeOdds();
                     break;
-            
-
                 default:
                     System.out.println("Nie podano opcji spośród podanych!");
                     break;
