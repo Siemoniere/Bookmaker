@@ -11,6 +11,7 @@ public class Register {
         System.out.println("Podaj nazwisko");
         String nazwisko = scanner.nextLine();
         System.out.println("Podaj date urodzenia w formacie YYYY-MM-DD");
+        //TODO sprawdź czy jest pełnoletni
         String data = scanner.nextLine();
         System.out.println("Podaj login");
         String login = scanner.nextLine();
