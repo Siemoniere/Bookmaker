@@ -4,26 +4,25 @@ import java.util.Scanner;
 
 public class AddMatch {
 
-    public AddMatch(){
-        Scanner scanner = new Scanner(System.in);
+    public AddMatch(Scanner scanner){
+        SecureScanner secureScanner = new SecureScanner(scanner);
         System.out.println("Podaj datę w postaci YYYY-MM-DD");
-        String date = scanner.nextLine();
+        String date = secureScanner.nextSecureLine();
         System.out.println("Podaj zespół nr 1");
-        String team1 = scanner.nextLine();
+        String team1 = secureScanner.nextSecureLine();
         //TODO sprawdz czy ten zespol istnieje - jak nie to dodaj do tabeli Zespoly
         System.out.println("Podaj zespół nr 2");
-        String team2 = scanner.nextLine();
+        String team2 = secureScanner.nextSecureLine();
         //TODO to samo tutaj
         System.out.println("Podaj kurs na zespół nr 1");
-        int kurs1 = scanner.nextInt();
+        int kurs1 = secureScanner.nextSecureInt();
         //TODO jakos sprawdź kurs czy nie za niski
         System.out.println("Podaj kurs na zespół nr 2");
-        int kurs2 = scanner.nextInt();
+        int kurs2 = secureScanner.nextSecureInt();
         System.out.println("Podaj kurs na remis");
-        int tie = scanner.nextInt();
+        int tie = secureScanner.nextSecureInt();
         //TODO sprawdź czy Team jakiś nie gra tego samego dnia (opcjonalnie)
 
         //TODO dodaj mecz do tabeli Mecz
-        scanner.close();
     }
 }

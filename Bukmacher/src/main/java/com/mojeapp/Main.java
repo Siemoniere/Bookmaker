@@ -1,21 +1,13 @@
 package com.mojeapp;
 
-import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
-    private static final String URL = "jdbc:mariadb://localhost:3306/bukmacherka";
-    private static final String USER = "root";
-    private static final String PASSWORD = "a32837**";
-
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
-
     public static void main(String[] args) {
-        try (Connection connection = getConnection()){
+        try (Connection conn = Database.getConnection();
+        ){
             System.out.println("Połączono");
         } catch (SQLException e){
             System.out.println("Nie udało się połączyć" + e.getMessage());
@@ -28,18 +20,20 @@ public class Main {
             System.out.println("2. Zarejestruj");
             System.out.println("3. Exit");
             int activity = scanner.nextInt();
+            scanner.nextLine();
             switch (activity) {
                 case 1:
-                    Login login = new Login();
+                    Login login = new Login(scanner);
                     String user = login.getUser();
-                    new Usage(user);
+                    new Usage(user, scanner);
                     break;
                 case 2:
-                    new Register();
+                    new Register(scanner);
                     break;
                 case 3:
                     scanner.close();
                     System.exit(0);
+                    Database.closeConnection();
                 default:
                     System.out.println("Nie wybrano opcji spośród podanych!");
                     break;

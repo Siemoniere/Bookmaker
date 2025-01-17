@@ -4,9 +4,9 @@ import java.util.Scanner;
 
 public class Usage {
 
-    public Usage(String user){
+    public Usage(String user, Scanner scanner){
+        SecureScanner secureScanner = new SecureScanner(scanner);
         String thisuser = user;
-        Scanner scanner = new Scanner(System.in);
         while(true){
             System.out.println("Co chcesz zrobić?");
             //TODO sprawdź czy admin
@@ -20,25 +20,27 @@ public class Usage {
                 System.out.println((option++) + ". Dodaj mecz");
                 System.out.println((option++) + ". Zmień kurs");
             }
-            int activity = scanner.nextInt();
+            int activity = secureScanner.nextSecureInt();
             switch (activity) {
                 case 1:
-                    new Wallet(thisuser);
+                    new Wallet(thisuser, scanner);
                     break;
                 case 2:
-                    new AddCoupon(thisuser);
+                    new AddCoupon(thisuser, scanner);
                     break;
-            
                 case 3:
-                    new DeleteAccount(thisuser);            
+                    DeleteAccount del = new DeleteAccount(thisuser, scanner);
+                    if(del.getDecision()){
+                        return;
+                    }
+                    break;      
                 case 4:
-                    scanner.close();
                     return;            
                 case 5:
-                    new AddMatch();
+                    new AddMatch(scanner);
                     break;
                 case 6:
-                    new ChangeOdds();
+                    new ChangeOdds(scanner);
                     break;
                 default:
                     System.out.println("Nie podano opcji spośród podanych!");
