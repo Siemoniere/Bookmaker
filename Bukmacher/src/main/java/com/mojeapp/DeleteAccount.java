@@ -3,15 +3,17 @@ package com.mojeapp;
 import java.util.Scanner;
 
 public class DeleteAccount {
-
-    public DeleteAccount(String user){
-        Scanner scanner = new Scanner(System.in);
+    private String decision = "";
+    public DeleteAccount(String user, Scanner scanner){
+        SecureScanner secureScanner = new SecureScanner(scanner);
         System.out.println("Na pewno? T/N");
-        String decision = scanner.nextLine();
-        if (decision == "T"){
+        this.decision = secureScanner.nextSecureLine();
+        if (this.decision.equals("T")){
+            System.out.println("Usunięto konto!");
             //TODO usun z bazy tego usera
         }
-        scanner.close();
-
+    }
+    public boolean getDecision() {
+        return this.decision.equals("T");
     }
 }
