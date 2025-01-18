@@ -55,8 +55,8 @@ public class AddCoupon {
         }
 
         System.out.println("Podaj kurs, który chcesz obstawić:");
-        System.out.println("1. " + team1 + " - Kurs: " + kurs1);
-        System.out.println("2. " + team2 + " - Kurs: " + kurs2);
+        System.out.println("1. " + team2 + " - Kurs: " + kurs1);
+        System.out.println("2. " + team1 + " - Kurs: " + kurs2);
         System.out.println("3. Remis - Kurs: " + remis);
         int activity = secureScanner.nextSecureInt();
 
@@ -72,7 +72,7 @@ public class AddCoupon {
                 selectedOdd = remis;
                 break;
             default:
-                System.out.println("❌ Nieprawidłowy wybór!");
+                System.out.println("Nieprawidłowy wybór!");
                 return;
         }
 
