@@ -181,51 +181,48 @@ public class AddCoupon {
         try (Connection conn = Database.getConnection()) {
             conn.setAutoCommit(false);
 
-            // 1️⃣ Insert into `Kupon`
             String sqlKupon = "INSERT INTO Kupon (UserID, Kurs, Wplata, MozliwaWygrana) " +
                             "VALUES ((SELECT UserID FROM Logowanie WHERE Login = ?), ?, ?, ?)";
             PreparedStatement stmtKupon = conn.prepareStatement(sqlKupon, PreparedStatement.RETURN_GENERATED_KEYS);
             stmtKupon.setString(1, user);
             stmtKupon.setDouble(2, odd);
             stmtKupon.setDouble(3, amount);
-            double 
-            stmtKupon.setDouble(4, amount * 2); // Example: potential win (modify logic as needed)
+            double winAmount = Math.round(amount * odd * 0.88 * 100.0) / 100.0;
+            stmtKupon.setDouble(4, winAmount);
 
             int rowsInserted = stmtKupon.executeUpdate();
             if (rowsInserted == 0) {
                 conn.rollback();
-                System.out.println("❌ Failed to add coupon.");
+                System.out.println("Failed to add coupon.");
                 return false;
             }
 
-            // Get the generated `KuponID`
             ResultSet generatedKeys = stmtKupon.getGeneratedKeys();
             int kuponId;
             if (generatedKeys.next()) {
                 kuponId = generatedKeys.getInt(1);
             } else {
                 conn.rollback();
-                System.out.println("❌ Failed to retrieve coupon ID.");
+                System.out.println("Failed to retrieve coupon ID.");
                 return false;
             }
 
-            // 2️⃣ Insert into `KuponMecze`
             String sqlKuponMecze = "INSERT INTO KuponMecze (KuponID, MeczID, Kurs) VALUES (?, ?, ?)";
             PreparedStatement stmtKuponMecze = conn.prepareStatement(sqlKuponMecze);
             stmtKuponMecze.setInt(1, kuponId);
             stmtKuponMecze.setInt(2, matchId);
-            stmtKuponMecze.setInt(3, betType); // Storing bet type
+            stmtKuponMecze.setDouble(3, odd);
 
             if (stmtKuponMecze.executeUpdate() == 0) {
                 conn.rollback();
-                System.out.println("❌ Failed to link coupon with match.");
+                System.out.println("Failed to link coupon with match.");
                 return false;
             }
 
-            conn.commit(); // ✅ Commit transaction
+            conn.commit();
             return true;
         } catch (SQLException e) {
-            System.err.println("❌ Error adding coupon: " + e.getMessage());
+            System.err.println("Error adding coupon: " + e.getMessage());
         }
         return false;
     }
