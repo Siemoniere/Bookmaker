@@ -9,5 +9,4 @@ com/mojeapp/AddMatch.class
 com/mojeapp/Register.class
 com/mojeapp/PasswordUtil.class
 com/mojeapp/DeleteAccount.class
-com/mojeapp/IsAdmin.class
 com/mojeapp/ChangeOdds.class

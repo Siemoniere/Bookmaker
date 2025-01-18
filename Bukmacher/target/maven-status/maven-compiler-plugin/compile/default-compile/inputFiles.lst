@@ -1,12 +1,11 @@
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/AddCoupon.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/PasswordUtil.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/Main.java
+/home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/AddMatch.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/Wallet.java
+/home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/DeleteAccount.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/Database.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/ChangeOdds.java
-/home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/IsAdmin.java
-/home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/AddMatch.java
-/home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/DeleteAccount.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/Login.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/Usage.java
 /home/siemoniere/Bazy/Bukmacher/src/main/java/com/mojeapp/SecureScanner.java

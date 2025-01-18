@@ -1,5 +1,9 @@
 package com.mojeapp;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Wallet {
@@ -13,20 +17,20 @@ public class Wallet {
             System.out.println("3. Wypłać");
             System.out.println("4. Wróć");
             int activity = secureScanner.nextSecureInt();
-            int value;
+            double value = 0;
             switch (activity) {
                 case 1:
-                    //TODO selectuj stan portfela tego usera
+                    balanceOperation(user, value);
                     break;
                 case 2:
                     System.out.println("Podaj kwote do wpłacenia");
-                    value = secureScanner.nextSecureInt();
-                    //TODO dodaj userowi wpłacana kwote
+                    value = secureScanner.nextSecureDouble();
+                    balanceOperation(user, value);
                     break;
                 case 3:
                     System.out.println("Podaj kwote do wypłacenia");
-                    value = secureScanner.nextSecureInt();
-                    //TODO odejmij userowi wyplacana kwote
+                    value = secureScanner.nextSecureDouble();
+                    balanceOperation(user, -value);
                     break;
                 case 4:
                     return;
@@ -36,4 +40,46 @@ public class Wallet {
             }
         }
     }
+    public double balanceOperation(String login, double value) {
+        double balance = -1;
+        try (Connection conn = Database.getConnection()) {
+            // 1️⃣ Pobieranie aktualnego salda
+            String sqlSelect = "SELECT stanKonta FROM Ludzie INNER JOIN Logowanie ON Ludzie.UserID = Logowanie.UserID WHERE Logowanie.Login = ?";
+            PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect);
+            stmtSelect.setString(1, login);
+            
+            try (ResultSet rs = stmtSelect.executeQuery()) {
+                if (rs.next()) {
+                    balance = rs.getDouble("stanKonta");
+                } else {
+                    System.out.println("❌ Użytkownik o podanym loginie nie istnieje.");
+                    return -1; // Zwracamy -1, jeśli użytkownik nie istnieje
+                }
+            }
+    
+            //Aktualizacja salda
+            double newBalance = balance + value;
+            if (newBalance < 0) {
+                System.out.println("Nie można wypłacić więcej niż dostępne saldo!");
+                return balance; // Zwracamy stare saldo
+            }
+    
+            String sqlUpdate = "UPDATE Ludzie SET stanKonta = ? WHERE UserID = (SELECT UserID FROM Logowanie WHERE Login = ?)";
+            PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate);
+            stmtUpdate.setDouble(1, newBalance);
+            stmtUpdate.setString(2, login);
+    
+            int rowsAffected = stmtUpdate.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Operacja zakończona sukcesem. Nowe saldo: " + newBalance + " PLN");
+                return newBalance;
+            } else {
+                System.out.println("Nie udało się zaktualizować salda.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Błąd podczas operacji portfela: " + e.getMessage());
+        }
+        return balance;
+    }
+    
 }
