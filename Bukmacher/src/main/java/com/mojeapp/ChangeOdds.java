@@ -11,7 +11,6 @@ public class ChangeOdds {
     public ChangeOdds(Scanner scanner) {
         SecureScanner secureScanner = new SecureScanner(scanner);
 
-        // 🔹 Wyświetlamy wszystkie dostępne zespoły
         System.out.println("Lista wszystkich zespołów:");
         listAllTeams();
 
@@ -40,12 +39,36 @@ public class ChangeOdds {
             return;
         }
 
+        System.out.println("Pobieranie kursów dla meczu...");
+        double kursGospodarze = 0, kursGoscie = 0, remis = 0;
+        try (Connection conn = Database.getConnection()) {
+            String sql = "SELECT Zespol1, Zespol2, Kurs1, Kurs2, KursRemis FROM Mecze WHERE MeczID = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, matchId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int gospodarzeId = rs.getInt("Zespol1");
+                int goscieId = rs.getInt("Zespol2");
+        
+                // Pobierz kursy bez zakładania kolejności wprowadzonej przez użytkownika
+                kursGospodarze = rs.getDouble("Kurs1");
+                kursGoscie = rs.getDouble("Kurs2");
+                remis = rs.getDouble("KursRemis");
+        
+                // Wyświetl czytelne informacje
+                System.out.println("Gospodarze: " + (gospodarzeId == team1Id ? team1 : team2) + " (Kurs: " + kursGospodarze + ")");
+                System.out.println("Goście: " + (goscieId == team1Id ? team1 : team2) + " (Kurs: " + kursGoscie + ")");
+            }
+        } catch (SQLException e) {
+            System.err.println("Błąd podczas pobierania kursów: " + e.getMessage());
+            return;
+        }
+        
         System.out.println("Podaj kurs zespołu, który chcesz zmienić:");
-        System.out.println("1. Kurs na " + team1);
-        System.out.println("2. Kurs na " + team2);
-        System.out.println("3. Kurs na remis");
+        System.out.println("1. Kurs na gospodarzy (Kurs: " + kursGospodarze + ")");
+        System.out.println("2. Kurs na gości (Kurs: " + kursGoscie + ")");
+        System.out.println("3. Kurs na remis (Kurs: " + remis + ")");
         int activity = secureScanner.nextSecureInt();
-
         double finalOdd = getValidOdds(secureScanner, "Podaj kurs docelowy:");
 
         switch (activity) {
@@ -96,10 +119,10 @@ public class ChangeOdds {
     private void listTeamMatches(int teamId) {
         try (Connection conn = Database.getConnection()) {
             String sql = "SELECT M.MeczID, M.Data, Z1.Nazwa AS Team1, Z2.Nazwa AS Team2, M.Kurs1, M.Kurs2, M.KursRemis " +
-                         "FROM Mecze M " +
-                         "JOIN Zespol Z1 ON M.Zespol1 = Z1.ZespolID " +
-                         "JOIN Zespol Z2 ON M.Zespol2 = Z2.ZespolID " +
-                         "WHERE M.Zespol1 = ? OR M.Zespol2 = ?";
+                        "FROM Mecze M " +
+                        "JOIN Zespol Z1 ON M.Zespol1 = Z1.ZespolID " +
+                        "JOIN Zespol Z2 ON M.Zespol2 = Z2.ZespolID " +
+                        "WHERE M.Zespol1 = ? OR M.Zespol2 = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, teamId);
             stmt.setInt(2, teamId);
