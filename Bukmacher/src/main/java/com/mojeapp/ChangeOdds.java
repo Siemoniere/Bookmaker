@@ -50,12 +50,10 @@ public class ChangeOdds {
                 int gospodarzeId = rs.getInt("Zespol1");
                 int goscieId = rs.getInt("Zespol2");
         
-                // Pobierz kursy bez zakładania kolejności wprowadzonej przez użytkownika
                 kursGospodarze = rs.getDouble("Kurs1");
                 kursGoscie = rs.getDouble("Kurs2");
                 remis = rs.getDouble("KursRemis");
         
-                // Wyświetl czytelne informacje
                 System.out.println("Gospodarze: " + (gospodarzeId == team1Id ? team1 : team2) + " (Kurs: " + kursGospodarze + ")");
                 System.out.println("Goście: " + (goscieId == team1Id ? team1 : team2) + " (Kurs: " + kursGoscie + ")");
             }
