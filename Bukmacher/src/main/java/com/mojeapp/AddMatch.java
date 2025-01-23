@@ -44,8 +44,11 @@ public class AddMatch {
     }
 
     private boolean isValidDouble(double number) {
-        return ((number * 100) % 1) == 0;
+        String text = String.valueOf(number);
+        int decimalPlaces = text.contains(".") ? text.split("\\.")[1].length() : 0;
+        return decimalPlaces <= 2;
     }
+    
 
     private int getOrCreateTeam(String teamName) {
         int teamId = -1;
@@ -58,7 +61,7 @@ public class AddMatch {
             if (rs.next()) {
                 teamId = rs.getInt("ZespolID");
             } else {
-                String insertSql = "INSERT INTO Zespol (Nazwa, Miasto) VALUES (?, 'Nieznane')";
+                String insertSql = "INSERT INTO Zespol (Nazwa) VALUES (?)";
                 PreparedStatement insertStmt = conn.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS);
                 insertStmt.setString(1, teamName);
                 insertStmt.executeUpdate();

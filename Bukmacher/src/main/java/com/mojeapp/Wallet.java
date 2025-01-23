@@ -43,7 +43,7 @@ public class Wallet {
     public double balanceOperation(String login, double value) {
         double balance = -1;
         try (Connection conn = Database.getConnection()) {
-            // 1️⃣ Pobieranie aktualnego salda
+            //Pobieranie aktualnego salda
             String sqlSelect = "SELECT stanKonta FROM Ludzie INNER JOIN Logowanie ON Ludzie.UserID = Logowanie.UserID WHERE Logowanie.Login = ?";
             PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect);
             stmtSelect.setString(1, login);
@@ -52,7 +52,7 @@ public class Wallet {
                 if (rs.next()) {
                     balance = rs.getDouble("stanKonta");
                 } else {
-                    System.out.println("❌ Użytkownik o podanym loginie nie istnieje.");
+                    System.out.println("Użytkownik o podanym loginie nie istnieje.");
                     return -1; // Zwracamy -1, jeśli użytkownik nie istnieje
                 }
             }

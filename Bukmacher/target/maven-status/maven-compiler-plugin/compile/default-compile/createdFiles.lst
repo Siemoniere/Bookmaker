@@ -1,6 +1,6 @@
 com/mojeapp/Wallet.class
-com/mojeapp/Main.class
 com/mojeapp/Login.class
+com/mojeapp/Main.class
 com/mojeapp/SecureScanner.class
 com/mojeapp/Usage.class
 com/mojeapp/Database.class

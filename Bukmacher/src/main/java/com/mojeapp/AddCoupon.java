@@ -38,25 +38,34 @@ public class AddCoupon {
             System.out.println("Mecz między " + team1 + " a " + team2 + " nie istnieje.");
             return;
         }
-
+        
         double kurs1 = 0, kurs2 = 0, remis = 0;
         try (Connection conn = Database.getConnection()) {
-            String sql = "SELECT Kurs1, Kurs2, KursRemis FROM Mecze WHERE MeczID = ?";
+            String sql = "SELECT Zespol1, Zespol2, Kurs1, Kurs2, KursRemis FROM Mecze WHERE MeczID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, matchId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                kurs1 = rs.getDouble("Kurs1");
-                kurs2 = rs.getDouble("Kurs2");
+                int zespol1Id = rs.getInt("Zespol1");
+                int zespol2Id = rs.getInt("Zespol2");
+        
+                if (zespol1Id == team1Id && zespol2Id == team2Id) {
+                    kurs1 = rs.getDouble("Kurs1");
+                    kurs2 = rs.getDouble("Kurs2");
+                } else if (zespol1Id == team2Id && zespol2Id == team1Id) {
+                    kurs1 = rs.getDouble("Kurs2");
+                    kurs2 = rs.getDouble("Kurs1");
+                }
                 remis = rs.getDouble("KursRemis");
             }
         } catch (SQLException e) {
             System.err.println("Błąd podczas pobierania kursów: " + e.getMessage());
         }
+        
 
         System.out.println("Podaj kurs, który chcesz obstawić:");
-        System.out.println("1. " + team2 + " - Kurs: " + kurs1);
-        System.out.println("2. " + team1 + " - Kurs: " + kurs2);
+        System.out.println("1. " + team1 + " - Kurs: " + kurs1);
+        System.out.println("2. " + team2 + " - Kurs: " + kurs2);
         System.out.println("3. Remis - Kurs: " + remis);
         int activity = secureScanner.nextSecureInt();
 
@@ -104,8 +113,8 @@ public class AddCoupon {
     private void listTeamsPlayingAgainst(int teamId) {
         try (Connection conn = Database.getConnection()) {
             String sql = "SELECT DISTINCT Z.Nazwa FROM Mecze M " +
-                         "JOIN Zespol Z ON (M.Zespol1 = Z.ZespolID OR M.Zespol2 = Z.ZespolID) " +
-                         "WHERE M.Zespol1 = ? OR M.Zespol2 = ? AND Z.ZespolID <> ?";
+                        "JOIN Zespol Z ON (M.Zespol1 = Z.ZespolID OR M.Zespol2 = Z.ZespolID) " +
+                        "WHERE M.Zespol1 = ? OR M.Zespol2 = ? AND Z.ZespolID <> ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, teamId);
             stmt.setInt(2, teamId);
