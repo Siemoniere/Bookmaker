@@ -53,7 +53,7 @@ public class Usage {
         }
     }
     public boolean isUserAdmin(String login) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT isAdmin FROM Ludzie INNER JOIN Logowanie ON Ludzie.UserID = Logowanie.UserID WHERE Logowanie.Login = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, login);

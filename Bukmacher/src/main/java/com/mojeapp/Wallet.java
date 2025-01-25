@@ -42,7 +42,7 @@ public class Wallet {
     }
     public double balanceOperation(String login, int value) {
         double balance = -1;
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sqlSelect = "SELECT stanKonta FROM Ludzie INNER JOIN Logowanie ON Ludzie.UserID = Logowanie.UserID WHERE Logowanie.Login = ?";
             PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect);
             stmtSelect.setString(1, login);

@@ -21,7 +21,7 @@ public class DeleteAccount {
         return this.decision.equals("T");
     }
     public void deleteUser(String login) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String getUserIdQuery = "SELECT UserID FROM Logowanie WHERE Login = ?";
             int userId = -1;
 

@@ -17,7 +17,7 @@ public class Login {
             String login = secureScanner.nextSecureLine();
             System.out.println("Podaj hasło");
             String password = secureScanner.nextSecureLine();
-            try (Connection conn = Database.getConnection()) {
+            try (Connection conn = Database.getConnection("normal")) {
                 String sql = "SELECT Password FROM Logowanie WHERE Login = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setString(1, login);

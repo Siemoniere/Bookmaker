@@ -38,7 +38,7 @@ public class Register {
             }
         }
 
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             conn.setAutoCommit(false); // Rozpoczynamy transakcję
 
             // Wstawienie użytkownika do Ludzie (bez loginu i hasła)
@@ -78,7 +78,7 @@ public class Register {
         }
     }
     private boolean isLoginTaken(String login) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT COUNT(*) FROM Logowanie WHERE Login = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, login);

@@ -41,7 +41,7 @@ public class ChangeOdds {
 
         System.out.println("Pobieranie kursów dla meczu...");
         double kursGospodarze = 0, kursGoscie = 0, remis = 0;
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT Zespol1, Zespol2, Kurs1, Kurs2, KursRemis FROM Mecze WHERE MeczID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, matchId);
@@ -86,7 +86,7 @@ public class ChangeOdds {
     }
 
     private void listAllTeams() {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT ZespolID, Nazwa FROM Zespol";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -100,7 +100,7 @@ public class ChangeOdds {
     }
 
     private int getTeamId(String teamName) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT ZespolID FROM Zespol WHERE Nazwa = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, teamName);
@@ -115,7 +115,7 @@ public class ChangeOdds {
     }
 
     private void listTeamMatches(int teamId) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT M.MeczID, M.Data, Z1.Nazwa AS Team1, Z2.Nazwa AS Team2, M.Kurs1, M.Kurs2, M.KursRemis " +
                         "FROM Mecze M " +
                         "JOIN Zespol Z1 ON M.Zespol1 = Z1.ZespolID " +
@@ -138,7 +138,7 @@ public class ChangeOdds {
     }
 
     private int getMatchId(int team1Id, int team2Id) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT MeczID FROM Mecze WHERE (Zespol1 = ? AND Zespol2 = ?) OR (Zespol1 = ? AND Zespol2 = ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, team1Id);
@@ -170,7 +170,7 @@ public class ChangeOdds {
     }
 
     private void updateOdds(int matchId, String column, double newOdds) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "UPDATE Mecze SET " + column + " = ? WHERE MeczID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setDouble(1, newOdds);
