@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class Database {
     private static String url;
-    private static String user;
-    private static String password;
+    private static String adminuser, user;
+    private static String adminpassword, password;
     private static Connection connection;
 
     static {
@@ -23,19 +23,32 @@ public class Database {
             properties.load(input);
 
             url = properties.getProperty("db.url");
+            adminuser = properties.getProperty("db.adminuser");
+            adminpassword = properties.getProperty("db.adminpassword");
             user = properties.getProperty("db.user");
             password = properties.getProperty("db.password");
+
         } catch (IOException e) {
             System.err.println("Błąd podczas ładowania konfiguracji bazy danych: " + e.getMessage());
         }
     }
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection(String accessLevel) throws SQLException {
         if (connection == null || connection.isClosed()) {
             if (url == null) {
                 throw new SQLException("URL bazy danych nie może być null! Sprawdź config.properties.");
             }
-            connection = DriverManager.getConnection(url, user, password);
+
+            switch (accessLevel.toLowerCase()) {
+                case "admin":
+                    connection = DriverManager.getConnection(url, adminuser, adminpassword);
+                    break;
+                case "normal":
+                    connection = DriverManager.getConnection(url, user, password);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Nieznany poziom dostępu: " + accessLevel);
+            }
         }
         return connection;
     }

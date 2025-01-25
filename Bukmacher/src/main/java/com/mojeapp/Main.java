@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        try (Connection conn = Database.getConnection();
+        try (Connection conn = Database.getConnection("admin");
         ){
             System.out.println("Połączono");
         } catch (SQLException e){

@@ -52,7 +52,7 @@ public class AddMatch {
 
     private int getOrCreateTeam(String teamName) {
         int teamId = -1;
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String checkSql = "SELECT ZespolID FROM Zespol WHERE Nazwa = ?";
             PreparedStatement checkStmt = conn.prepareStatement(checkSql);
             checkStmt.setString(1, teamName);
@@ -78,7 +78,7 @@ public class AddMatch {
     }
 
     private boolean teamPlaysOnDate(int teamId, String date) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "SELECT COUNT(*) FROM Mecze WHERE Data = ? AND (Zespol1 = ? OR Zespol2 = ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, date);
@@ -96,7 +96,7 @@ public class AddMatch {
     }
 
     private boolean addMatch(String date, int team1, int team2, double kurs1, double kurs2, double tie) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("admin")) {
             String sql = "INSERT INTO Mecze (Data, Zespol1, Zespol2, Kurs1, Kurs2, KursRemis) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, date);

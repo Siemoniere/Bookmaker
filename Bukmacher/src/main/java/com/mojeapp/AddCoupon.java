@@ -40,7 +40,7 @@ public class AddCoupon {
         }
         
         double kurs1 = 0, kurs2 = 0, remis = 0;
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT Zespol1, Zespol2, Kurs1, Kurs2, KursRemis FROM Mecze WHERE MeczID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, matchId);
@@ -98,7 +98,7 @@ public class AddCoupon {
     }
 
     private void listAllTeams() {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT ZespolID, Nazwa FROM Zespol";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
@@ -111,7 +111,7 @@ public class AddCoupon {
     }
 
     private void listTeamsPlayingAgainst(int teamId) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT DISTINCT Z.Nazwa FROM Mecze M " +
                         "JOIN Zespol Z ON (M.Zespol1 = Z.ZespolID OR M.Zespol2 = Z.ZespolID) " +
                         "WHERE M.Zespol1 = ? OR M.Zespol2 = ? AND Z.ZespolID <> ?";
@@ -129,7 +129,7 @@ public class AddCoupon {
     }
 
     private int getTeamId(String teamName) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT ZespolID FROM Zespol WHERE Nazwa = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, teamName);
@@ -144,7 +144,7 @@ public class AddCoupon {
     }
 
     private double getUserBalance(String login) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT stanKonta FROM Ludzie INNER JOIN Logowanie ON Ludzie.UserID = Logowanie.UserID WHERE Logowanie.Login = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, login);
@@ -175,7 +175,7 @@ public class AddCoupon {
     }
 
     private void updateUserBalance(String login, double newBalance) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "UPDATE Ludzie SET stanKonta = ? WHERE UserID = (SELECT UserID FROM Logowanie WHERE Login = ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setDouble(1, newBalance);
@@ -187,7 +187,7 @@ public class AddCoupon {
     }
 
     private boolean addCoupon(String user, int matchId, double odd, double amount) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             conn.setAutoCommit(false);
 
             String sqlKupon = "INSERT INTO Kupon (UserID, Kurs, Wplata, MozliwaWygrana) " +
@@ -236,7 +236,7 @@ public class AddCoupon {
         return false;
     }
     private int getMatchId(int team1Id, int team2Id) {
-        try (Connection conn = Database.getConnection()) {
+        try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT MeczID FROM Mecze WHERE (Zespol1 = ? AND Zespol2 = ?) OR (Zespol1 = ? AND Zespol2 = ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, team1Id);
