@@ -18,10 +18,12 @@ public class Register {
         String data = secureScanner.nextSecureLine();
         System.out.println("Podaj login:");
         String login = secureScanner.nextSecureLine();
+
         if (isLoginTaken(login)) {
             System.out.println("Ten login jest już zajęty! Wybierz inny.");
             return;
         }
+
         String password = null;
         boolean isCorrect = false;
 
@@ -41,51 +43,66 @@ public class Register {
         try (Connection conn = Database.getConnection("normal")) {
             conn.setAutoCommit(false); // Rozpoczynamy transakcję
 
-            // Wstawienie użytkownika do Ludzie (bez loginu i hasła)
-            String insertLudzieSQL = "INSERT INTO Ludzie (Imie, Nazwisko, DataUrodzenia, StanKonta, isAdmin) VALUES (?, ?, ?, 0, 0)";
-            PreparedStatement stmtLudzie = conn.prepareStatement(insertLudzieSQL, PreparedStatement.RETURN_GENERATED_KEYS);
-            stmtLudzie.setString(1, imie);
-            stmtLudzie.setString(2, nazwisko);
-            stmtLudzie.setString(3, data);
+            int userId = getUserIdFromLudzie(conn, imie, nazwisko, data);
 
-            stmtLudzie.executeUpdate();
+            if (userId == -1) { 
+                String insertLudzieSQL = "INSERT INTO Ludzie (Imie, Nazwisko, DataUrodzenia, StanKonta, isAdmin) VALUES (?, ?, ?, 0, 0)";
+                try (PreparedStatement stmtLudzie = conn.prepareStatement(insertLudzieSQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                    stmtLudzie.setString(1, imie);
+                    stmtLudzie.setString(2, nazwisko);
+                    stmtLudzie.setString(3, data);
+                    stmtLudzie.executeUpdate();
 
-            // Pobieramy wygenerowany UserID
-            ResultSet generatedKeys = stmtLudzie.getGeneratedKeys();
-            int userId = -1;
-            if (generatedKeys.next()) {
-                userId = generatedKeys.getInt(1);
+                    try (ResultSet generatedKeys = stmtLudzie.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            userId = generatedKeys.getInt(1);
+                        } else {
+                            throw new SQLException("Błąd: Nie udało się pobrać UserID!");
+                        }
+                    }
+                }
             }
 
-            //Wstawienie loginu i hasła do Logowanie
-            if (userId != -1) {
-                String insertLogowanieSQL = "INSERT INTO Logowanie (UserID, Login, Password) VALUES (?, ?, ?)";
-                PreparedStatement stmtLogowanie = conn.prepareStatement(insertLogowanieSQL);
+            String insertLogowanieSQL = "INSERT INTO Logowanie (UserID, Login, Password) VALUES (?, ?, ?)";
+            try (PreparedStatement stmtLogowanie = conn.prepareStatement(insertLogowanieSQL)) {
                 stmtLogowanie.setInt(1, userId);
                 stmtLogowanie.setString(2, login);
                 stmtLogowanie.setString(3, password);
-
                 stmtLogowanie.executeUpdate();
-            } else {
-                throw new SQLException("Błąd: Nie udało się pobrać UserID!");
             }
 
-            //Zatwierdzenie transakcji
             conn.commit();
             System.out.println("Użytkownik został zarejestrowany!");
         } catch (SQLException e) {
             System.err.println("Błąd podczas rejestracji: " + e.getMessage());
         }
     }
+
+    private int getUserIdFromLudzie(Connection conn, String imie, String nazwisko, String data) throws SQLException {
+        String sql = "SELECT UserID FROM Ludzie WHERE Imie = ? AND Nazwisko = ? AND DataUrodzenia = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, imie);
+            stmt.setString(2, nazwisko);
+            stmt.setString(3, data);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Zwracamy istniejące UserID
+                }
+            }
+        }
+        return -1; // Nie znaleziono osoby
+    }
+
     private boolean isLoginTaken(String login) {
         try (Connection conn = Database.getConnection("normal")) {
             String sql = "SELECT COUNT(*) FROM Logowanie WHERE Login = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // Jeśli istnieje co najmniej jeden rekord, login jest zajęty
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, login);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1) > 0;
+                    }
+                }
             }
         } catch (SQLException e) {
             System.err.println("Błąd podczas sprawdzania loginu: " + e.getMessage());

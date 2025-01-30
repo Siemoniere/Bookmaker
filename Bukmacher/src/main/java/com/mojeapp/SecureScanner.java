@@ -14,7 +14,7 @@ public class SecureScanner {
         while (true) {
             String input = scanner.nextLine().trim();
             if (input.matches(".*[\"\\=!].*")) {
-                System.out.println("Błąd: Nie można używać znaków: \" - = !");
+                System.out.println("Błąd: Nie można używać znaków: \" = !");
                 System.out.print("Wpisz ponownie: ");
             } else {
                 return input;
@@ -25,7 +25,7 @@ public class SecureScanner {
         while (true) {
             String input = scanner.nextLine().trim();
                 if (input.matches(".*[\"\\-=!].*")) {
-                System.out.println("Błąd: Nie można używać znaków: \" - = !");
+                System.out.println("Błąd: Nie można używać znaków: \"  = !");
                 System.out.print("Wpisz ponownie liczbę całkowitą: ");
                 continue;
             }
