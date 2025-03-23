@@ -29,7 +29,7 @@ db.adminpassword=bukmacher
 db.user=<twoj_login>
 db.password=<twoje_haslo>
 ```
-Następnie uruchamiamy projekt poleceniem:
+Następnie przechodzimy z powrotem do naszego katalogu Bukmacher i uruchamiamy projekt poleceniem:
 ```
 mvn clean compile exec:java
 ```
