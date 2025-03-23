@@ -5,8 +5,29 @@ Niniejszy projekt stanowi system do **zakładów bukmacherskich**. Polega on na 
 W pierwszej kolejności należy skolonować repozytorium za pomoca poleceń:
 ```
 git clone https://github.com/Siemoniere/Bookmaker.git
-cd Bookmaker
-cd Bukmacher
+cd Bookmaker/Bukmacher
+```
+Następnie logujemy sie do konta na MariaDB i tworzymy nową bazę:
+```
+mysql -u <twoj_login> -p
+```
+Po wpisaniu hasła:
+```
+CREATE DATABASE <twoja_nazwa_bazy>
+EXIT;
+```
+Następnie rozpakowujemy backup i przechodzimy do pliku config.properties:
+```
+mysql -u <twoj_login> -p <twoja_nazwa_bazy> < backup.sql
+cd src/main/resources
+```
+I zmieniamy nasze dane w tymże pliku na nasze:
+```
+db.url=jdbc:mariadb://localhost:3306/<twoja_nazwa_bazy>?loggerLevel=OFF
+db.adminuser=bukmacher
+db.adminpassword=bukmacher
+db.user=<twoj_login>
+db.password=<twoje_haslo>
 ```
 Następnie uruchamiamy projekt poleceniem:
 ```
